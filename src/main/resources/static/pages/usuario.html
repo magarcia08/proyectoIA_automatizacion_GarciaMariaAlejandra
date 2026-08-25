@@ -1,0 +1,70 @@
+<div class="module-view fade-in">
+    <div class="page-head">
+        <div>
+            <h2>Usuarios</h2>
+            <p>Cuentas del sistema y sus roles (SUPERADMIN, ADMIN, EMPLEADO).</p>
+        </div>
+        <button class="btn btn-primary" id="newUserButton">+ Nuevo usuario</button>
+    </div>
+
+    <div class="module-toolbar">
+        <div class="search-box">
+            <input id="userSearch" type="search" placeholder="Buscar por username o email">
+        </div>
+        <select id="userRoleFilter" class="toolbar-select" aria-label="Filtrar por rol">
+            <option value="">Todos los roles</option>
+            <option value="SUPERADMIN">SUPERADMIN</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="EMPLEADO">EMPLEADO</option>
+        </select>
+    </div>
+
+    <div class="table-card">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Username</th><th>Email</th>
+                        <th>Rol</th><th>Estado</th><th>Creado</th><th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody"></tbody>
+            </table>
+        </div>
+        <div class="table-footer" id="userTableFooter">Cargando usuarios...</div>
+    </div>
+
+    <div class="modal" id="userModal" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-head">
+                <h3>Nuevo usuario</h3>
+                <button class="icon-button modal-close" type="button">×</button>
+            </div>
+            <form id="userForm">
+                <div class="modal-body form-grid">
+                    <div class="form-group">
+                        <label for="newUsername">Username</label>
+                        <input id="newUsername" type="text" required minlength="3" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="newEmail">Email</label>
+                        <input id="newEmail" type="email" required maxlength="150">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Contraseña</label>
+                        <input id="newPassword" type="password" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="newRol">Rol</label>
+                        <select id="newRol" required></select>
+                        <small id="rolHint" style="color:var(--text-muted,#6b7280)"></small>
+                    </div>
+                </div>
+                <div class="modal-foot">
+                    <button class="btn btn-secondary modal-close" type="button">Cancelar</button>
+                    <button class="btn btn-primary" type="submit">Crear usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

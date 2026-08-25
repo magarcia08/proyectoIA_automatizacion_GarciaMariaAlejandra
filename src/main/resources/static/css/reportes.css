@@ -1,0 +1,272 @@
+/* ==================== Explorador de reportes (examen: filtros) ==================== */
+
+.reporte-explorer {
+    position: relative;
+    background: var(--white);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+/* Barra de acento superior: cambia de color segun la pestaña activa */
+.reporte-explorer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--blue-600);
+    transition: background var(--transition);
+}
+
+.reporte-explorer[data-active="auditoria"]::before {
+    background: var(--purple-600);
+}
+
+.reporte-tabs {
+    display: flex;
+    gap: .3rem;
+    padding: .6rem;
+    background: var(--slate-50);
+    border-bottom: 1px solid var(--slate-200);
+}
+
+.reporte-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .55rem 1.1rem;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-md);
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--slate-500);
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: left;
+}
+
+.reporte-tab:hover {
+    color: var(--slate-700);
+    background: var(--slate-100);
+}
+
+.reporte-tab.active {
+    background: var(--white);
+    color: var(--blue-700);
+    box-shadow: var(--shadow-sm);
+}
+
+.reporte-tab.active[data-tab="auditoria"] {
+    color: var(--purple-600);
+}
+
+.reporte-tab-icon {
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+.reporte-tab small {
+    display: block;
+    font-size: .68rem;
+    font-weight: 500;
+    color: var(--slate-400);
+    margin-top: 1px;
+}
+
+.reporte-tab.active small {
+    color: var(--slate-500);
+}
+
+.reporte-tab-count {
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0 .4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--slate-200);
+    color: var(--slate-700);
+    font-size: .72rem;
+    font-weight: 700;
+}
+
+.reporte-tab.active .reporte-tab-count {
+    background: var(--blue-100);
+    color: var(--blue-700);
+}
+
+.reporte-tab.active[data-tab="auditoria"] .reporte-tab-count {
+    background: var(--purple-100);
+    color: var(--purple-600);
+}
+
+.reporte-panel {
+    padding: 1.25rem;
+}
+
+.reporte-panel.hidden {
+    display: none;
+}
+
+.reporte-filterbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: .9rem;
+    padding: 1rem;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-md);
+}
+
+.reporte-field {
+    display: flex;
+    flex-direction: column;
+    gap: .32rem;
+    flex: 1 1 150px;
+    min-width: 140px;
+}
+
+.reporte-field label {
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--slate-500);
+}
+
+.reporte-field-icon {
+    font-size: .85rem;
+    color: var(--slate-400);
+}
+
+.reporte-field select,
+.reporte-field input {
+    border: 1px solid var(--slate-300);
+    border-radius: var(--radius-sm);
+    padding: .55rem .65rem;
+    font-size: .875rem;
+    background: var(--white);
+    color: var(--slate-900);
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.reporte-field select:focus,
+.reporte-field input:focus {
+    outline: none;
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px var(--blue-100);
+}
+
+.reporte-actions {
+    display: flex;
+    gap: .5rem;
+    margin-left: auto;
+}
+
+/* Chips de filtros activos */
+.reporte-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin: .85rem 0;
+}
+
+.reporte-chips:empty {
+    margin: 0;
+}
+
+.reporte-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .3rem .3rem .3rem .7rem;
+    background: var(--blue-50);
+    color: var(--blue-700);
+    border: 1px solid var(--blue-100);
+    border-radius: 999px;
+    font-size: .78rem;
+    font-weight: 600;
+}
+
+.reporte-chip button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.1rem;
+    height: 1.1rem;
+    border: none;
+    border-radius: 50%;
+    background: var(--blue-100);
+    color: var(--blue-700);
+    font-size: .85rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.reporte-chip button:hover {
+    background: var(--blue-500);
+    color: var(--white);
+}
+
+/* Tabla: encabezado pegajoso + zebra + hover, solo dentro del explorador */
+.reporte-table-card {
+    box-shadow: none;
+    border: 1px solid var(--slate-200);
+}
+
+.reporte-table-card .table-scroll thead th {
+    position: sticky;
+    top: 0;
+    background: var(--slate-50);
+    z-index: 1;
+}
+
+.reporte-table-card .table-scroll tbody tr:nth-child(even) {
+    background: var(--slate-50);
+}
+
+.reporte-table-card .table-scroll tbody tr:hover {
+    background: var(--blue-50);
+}
+
+/* Estado vacio con icono, dentro de las tablas del explorador */
+.reporte-table-card .empty-state {
+    padding: 40px 20px;
+}
+
+.reporte-table-card .empty-state::before {
+    content: "⌕";
+    display: block;
+    font-size: 1.6rem;
+    color: var(--slate-300);
+    margin-bottom: 6px;
+}
+
+@media (max-width: 720px) {
+    .reporte-actions {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .reporte-actions .btn {
+        flex: 1;
+    }
+
+    .reporte-tabs {
+        flex-wrap: wrap;
+    }
+
+    .reporte-tab {
+        flex: 1 1 auto;
+    }
+}

@@ -1,0 +1,140 @@
+<div class="module-view fade-in">
+    <div class="page-head">
+        <div>
+            <h2>Reportes</h2>
+            <p>Lectura ejecutiva del inventario y la rotación de productos.</p>
+        </div>
+        <button class="btn btn-secondary" id="printReportButton">Imprimir reporte</button>
+    </div>
+
+    <div class="kpi-grid report-kpis" id="reportKpis"></div>
+
+    <div class="dashboard-grid">
+        <article class="panel">
+            <div class="panel-head">
+                <h3>Stock total por bodega</h3>
+                <span>Participación sobre el inventario</span>
+            </div>
+            <div class="warehouse-bars" id="reportWarehouseBars"></div>
+        </article>
+        <article class="panel">
+            <div class="panel-head">
+                <h3>Productos más movidos</h3>
+                <span>Unidades registradas</span>
+            </div>
+            <div class="activity-list" id="topProductsList"></div>
+        </article>
+    </div>
+
+    <!-- ==================== Reporte de movimientos (filtros) ==================== -->
+    <div class="page-head" style="margin-top:1.5rem">
+        <div>
+            <h3>Explorador de movimientos</h3>
+            <p>Filtra por bodega, producto, tipo y rango de fechas.</p>
+        </div>
+    </div>
+
+    <div class="module-toolbar">
+        <select id="reportMovBodega" class="toolbar-select" aria-label="Filtrar por bodega">
+            <option value="">Todas las bodegas</option>
+        </select>
+        <select id="reportMovProducto" class="toolbar-select" aria-label="Filtrar por producto">
+            <option value="">Todos los productos</option>
+        </select>
+        <select id="reportMovTipo" class="toolbar-select" aria-label="Filtrar por tipo">
+            <option value="">Todos los tipos</option>
+            <option value="ENTRADA">Entrada</option>
+            <option value="SALIDA">Salida</option>
+            <option value="TRANSFERENCIA">Transferencia</option>
+        </select>
+        <div class="form-group" style="margin:0">
+            <label for="reportMovDesde" style="font-size:.75rem">Desde</label>
+            <input id="reportMovDesde" type="date">
+        </div>
+        <div class="form-group" style="margin:0">
+            <label for="reportMovHasta" style="font-size:.75rem">Hasta</label>
+            <input id="reportMovHasta" type="date">
+        </div>
+        <button class="btn btn-secondary" id="reportMovFilterButton" type="button">Filtrar</button>
+        <button class="btn btn-secondary" id="reportMovClearButton" type="button">Limpiar</button>
+    </div>
+
+    <div class="table-card">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Fecha</th><th>Tipo</th><th>Usuario</th>
+                        <th>Origen</th><th>Destino</th><th>Productos</th>
+                    </tr>
+                </thead>
+                <tbody id="reportMovTableBody"></tbody>
+            </table>
+        </div>
+        <div class="table-footer" id="reportMovTableFooter">Cargando movimientos...</div>
+    </div>
+
+    <!-- ==================== Reporte de auditoría (filtros) ==================== -->
+    <div class="page-head" style="margin-top:1.5rem">
+        <div>
+            <h3>Explorador de auditoría</h3>
+            <p>Filtra por producto, rango de fecha de cambio y campo modificado.</p>
+        </div>
+    </div>
+
+    <div class="module-toolbar">
+        <select id="reportAudProducto" class="toolbar-select" aria-label="Filtrar por producto">
+            <option value="">Todos los productos</option>
+        </select>
+        <div class="form-group" style="margin:0">
+            <label for="reportAudDesde" style="font-size:.75rem">Desde</label>
+            <input id="reportAudDesde" type="date">
+        </div>
+        <div class="form-group" style="margin:0">
+            <label for="reportAudHasta" style="font-size:.75rem">Hasta</label>
+            <input id="reportAudHasta" type="date">
+        </div>
+        <input id="reportAudCampo" type="search" placeholder="Campo modificado (ej: precio)" style="max-width:220px">
+        <button class="btn btn-secondary" id="reportAudFilterButton" type="button">Filtrar</button>
+        <button class="btn btn-secondary" id="reportAudClearButton" type="button">Limpiar</button>
+    </div>
+
+    <div class="table-card">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Fecha</th><th>Operación</th>
+                        <th>Usuario</th><th>Entidad</th><th>ID entidad</th><th>Detalle</th>
+                    </tr>
+                </thead>
+                <tbody id="reportAudTableBody"></tbody>
+            </table>
+        </div>
+        <div class="table-footer" id="reportAudTableFooter">Cargando auditorías...</div>
+    </div>
+
+    <div class="modal" id="reportAuditDetailModal" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-head">
+                <h3>Detalle del cambio</h3>
+                <button class="icon-button modal-close" type="button">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group form-span">
+                        <label>Valores anteriores</label>
+                        <pre id="reportAuditDetailBefore" class="audit-json">—</pre>
+                    </div>
+                    <div class="form-group form-span">
+                        <label>Valores nuevos</label>
+                        <pre id="reportAuditDetailAfter" class="audit-json">—</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-secondary modal-close" type="button">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

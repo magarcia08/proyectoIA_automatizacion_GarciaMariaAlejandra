@@ -1,0 +1,64 @@
+<div class="module-view fade-in">
+    <div class="page-head">
+        <div>
+            <h2>Bodegas</h2>
+            <p>Sedes físicas, capacidades y responsables de operación.</p>
+        </div>
+        <button class="btn btn-primary" id="newWarehouseButton">+ Nueva bodega</button>
+    </div>
+
+    <div class="module-toolbar">
+        <div class="search-box">
+            <input id="warehouseSearch" type="search" placeholder="Buscar por nombre o ubicación">
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Bodega</th><th>Ubicación</th>
+                        <th>Capacidad</th><th>Encargado</th><th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="warehouseTableBody"></tbody>
+            </table>
+        </div>
+        <div class="table-footer" id="warehouseTableFooter">Cargando bodegas...</div>
+    </div>
+
+    <div class="modal" id="warehouseModal" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-head">
+                <h3 id="warehouseModalTitle">Nueva bodega</h3>
+                <button class="icon-button modal-close" type="button">×</button>
+            </div>
+            <form id="warehouseForm">
+                <div class="modal-body form-grid">
+                    <input type="hidden" id="warehouseId">
+                    <div class="form-group">
+                        <label for="warehouseName">Nombre</label>
+                        <input id="warehouseName" type="text" required maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="warehouseLocation">Ubicación</label>
+                        <input id="warehouseLocation" type="text" required maxlength="150">
+                    </div>
+                    <div class="form-group">
+                        <label for="warehouseCapacity">Capacidad</label>
+                        <input id="warehouseCapacity" type="number" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="warehouseManager">Encargado</label>
+                        <input id="warehouseManager" type="text" required maxlength="100">
+                    </div>
+                </div>
+                <div class="modal-foot">
+                    <button class="btn btn-secondary modal-close" type="button">Cancelar</button>
+                    <button class="btn btn-primary" type="submit">Guardar bodega</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

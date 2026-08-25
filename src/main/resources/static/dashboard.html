@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel administrativo | LogiTrack</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/table.css">
+    <link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/animation.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body class="dashboard-page">
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-head">
+                <a class="brand brand-light" href="dashboard.html">
+                    <span class="brand-mark">LT</span>
+                    <span class="brand-name">LogiTrack</span>
+                </a>
+                <button class="icon-button sidebar-close" id="sidebarClose"
+                        aria-label="Cerrar menú">×</button>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Navegación principal">
+                <span class="nav-label">GENERAL</span>
+                <button class="nav-item active" data-module="inicio">
+                    <span class="nav-icon">⌂</span><span>Resumen</span>
+                </button>
+                <span class="nav-label">OPERACIÓN</span>
+                <button class="nav-item" data-module="producto">
+                    <span class="nav-icon">□</span><span>Productos</span>
+                </button>
+                <button class="nav-item" data-module="bodega">
+                    <span class="nav-icon">▥</span><span>Bodegas</span>
+                </button>
+                <button class="nav-item" data-module="inventario">
+                    <span class="nav-icon">▦</span><span>Inventario</span>
+                </button>
+                <button class="nav-item" data-module="movimiento">
+                    <span class="nav-icon">⇄</span><span>Movimientos</span>
+                </button>
+                <span class="nav-label">CONTROL</span>
+                <button class="nav-item" data-module="auditoria" id="auditoriaNavItem">
+                    <span class="nav-icon">◎</span><span>Auditoría</span>
+                </button>
+                <button class="nav-item" data-module="reporte">
+                    <span class="nav-icon">▤</span><span>Reportes</span>
+                </button>
+                <span class="nav-label" id="adminSectionLabel">ADMINISTRACIÓN</span>
+                <button class="nav-item" data-module="usuario" id="usuarioNavItem">
+                    <span class="nav-icon">☺</span><span>Usuarios</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-foot">
+                <a class="btn-link" href="/swagger-ui.html" target="_blank" rel="noopener"
+                   style="display:block;text-align:center;margin-bottom:.75rem;font-size:.85rem">
+                    Documentación de la API (Swagger)
+                </a>
+                <div class="system-status">
+                    <span class="status-dot"></span>
+                    <div><strong id="apiStatusLabel">Backend conectado</strong><small>LogiTrack API</small></div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <main class="main-area">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="icon-button menu-button" id="menuButton"
+                            aria-label="Abrir menú">☰</button>
+                    <div>
+                        <p class="topbar-kicker">Panel administrativo</p>
+                        <h1 id="pageTitle">Resumen general</h1>
+                    </div>
+                </div>
+                <div class="topbar-actions">
+                    <div class="api-state" id="apiState">
+                        <span class="status-dot demo"></span>
+                        <span>Datos de muestra</span>
+                    </div>
+                    <div class="user-menu">
+                        <div class="avatar" id="userInitial">A</div>
+                        <div class="user-copy">
+                            <strong id="userName">Administrador</strong>
+                            <span id="userRole">ADMIN</span>
+                        </div>
+                        <button class="icon-button" id="logoutButton"
+                                aria-label="Cerrar sesión">↪</button>
+                    </div>
+                </div>
+            </header>
+
+            <section class="content-area" id="mainContent" aria-live="polite"></section>
+        </main>
+    </div>
+
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/producto.js"></script>
+    <script src="js/bodega.js"></script>
+    <script src="js/inventario.js"></script>
+    <script src="js/movimiento.js"></script>
+    <script src="js/auditoria.js"></script>
+    <script src="js/reporte.js"></script>
+    <script src="js/usuario.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

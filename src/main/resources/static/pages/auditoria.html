@@ -1,0 +1,62 @@
+<div class="module-view fade-in">
+    <div class="page-head">
+        <div>
+            <h2>Auditoría</h2>
+            <p>Trazabilidad de cada cambio: quién, cuándo, y qué valores tenía antes/después.</p>
+        </div>
+    </div>
+
+    <div class="module-toolbar">
+        <div class="search-box">
+            <input id="auditSearch" type="search" placeholder="Buscar por entidad">
+        </div>
+        <select id="auditTypeFilter" class="toolbar-select" aria-label="Filtrar operación">
+            <option value="">Todas las operaciones</option>
+            <option value="INSERT">Insertar</option>
+            <option value="UPDATE">Actualizar</option>
+            <option value="DELETE">Eliminar</option>
+        </select>
+        <select id="auditUserFilter" class="toolbar-select" aria-label="Filtrar por usuario">
+            <option value="">Todos los usuarios</option>
+        </select>
+    </div>
+
+    <div class="table-card">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Fecha</th><th>Operación</th>
+                        <th>Usuario</th><th>Entidad</th><th>ID entidad</th><th>Detalle</th>
+                    </tr>
+                </thead>
+                <tbody id="auditTableBody"></tbody>
+            </table>
+        </div>
+        <div class="table-footer" id="auditTableFooter">Cargando auditorías...</div>
+    </div>
+
+    <div class="modal" id="auditDetailModal" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-head">
+                <h3>Detalle del cambio</h3>
+                <button class="icon-button modal-close" type="button">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group form-span">
+                        <label>Valores anteriores</label>
+                        <pre id="auditDetailBefore" class="audit-json">—</pre>
+                    </div>
+                    <div class="form-group form-span">
+                        <label>Valores nuevos</label>
+                        <pre id="auditDetailAfter" class="audit-json">—</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-secondary modal-close" type="button">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

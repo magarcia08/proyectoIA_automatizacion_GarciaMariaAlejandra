@@ -1,0 +1,88 @@
+<div class="module-view fade-in">
+    <div class="page-head">
+        <div>
+            <h2>Movimientos</h2>
+            <p>Entradas, salidas y transferencias registradas entre bodegas.</p>
+        </div>
+        <button class="btn btn-primary" id="newMovementButton">+ Registrar movimiento</button>
+    </div>
+
+    <div class="module-toolbar">
+        <div class="search-box">
+            <input id="movementSearch" type="search" placeholder="Buscar por tipo, bodega o usuario">
+        </div>
+        <select id="movementTypeFilter" class="toolbar-select" aria-label="Filtrar por tipo">
+            <option value="">Todos los tipos</option>
+            <option value="ENTRADA">Entradas</option>
+            <option value="SALIDA">Salidas</option>
+            <option value="TRANSFERENCIA">Transferencias</option>
+        </select>
+        <div class="form-group" style="margin:0">
+            <label for="movementDateFrom" style="font-size:.75rem">Desde</label>
+            <input id="movementDateFrom" type="date">
+        </div>
+        <div class="form-group" style="margin:0">
+            <label for="movementDateTo" style="font-size:.75rem">Hasta</label>
+            <input id="movementDateTo" type="date">
+        </div>
+        <button class="btn btn-secondary" id="applyDateFilterButton" type="button">Filtrar por fecha</button>
+        <button class="btn btn-secondary" id="clearDateFilterButton" type="button">Limpiar</button>
+    </div>
+
+    <div class="table-card">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Fecha</th><th>Tipo</th><th>Usuario</th>
+                        <th>Origen</th><th>Destino</th><th>Productos</th>
+                    </tr>
+                </thead>
+                <tbody id="movementTableBody"></tbody>
+            </table>
+        </div>
+        <div class="table-footer" id="movementTableFooter">Cargando movimientos...</div>
+    </div>
+
+    <div class="modal" id="movementModal" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-head">
+                <h3>Registrar movimiento</h3>
+                <button class="icon-button modal-close" type="button">×</button>
+            </div>
+            <form id="movementForm">
+                <div class="modal-body form-grid">
+                    <div class="form-group">
+                        <label for="movementType">Tipo</label>
+                        <select id="movementType" required>
+                            <option value="">Selecciona</option>
+                            <option value="ENTRADA">Entrada</option>
+                            <option value="SALIDA">Salida</option>
+                            <option value="TRANSFERENCIA">Transferencia</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="originGroup">
+                        <label for="movementOrigin">Bodega de origen</label>
+                        <select id="movementOrigin"></select>
+                    </div>
+                    <div class="form-group" id="destinationGroup">
+                        <label for="movementDestination">Bodega de destino</label>
+                        <select id="movementDestination"></select>
+                    </div>
+
+                    <div class="form-group form-span">
+                        <label>Productos del movimiento (desglose)</label>
+                        <div id="movementProductRows" class="product-rows"></div>
+                        <button class="btn btn-secondary" type="button" id="addProductRowButton" style="margin-top:.5rem">
+                            + Agregar producto
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-foot">
+                    <button class="btn btn-secondary modal-close" type="button">Cancelar</button>
+                    <button class="btn btn-primary" type="submit">Registrar movimiento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

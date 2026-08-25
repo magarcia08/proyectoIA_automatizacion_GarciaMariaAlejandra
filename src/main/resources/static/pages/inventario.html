@@ -1,0 +1,34 @@
+<div class="module-view fade-in">
+    <div class="page-head">
+        <div>
+            <h2>Inventario por bodega</h2>
+            <p>Existencias disponibles de cada producto en cada sede.</p>
+        </div>
+    </div>
+
+    <div class="module-toolbar">
+        <div class="search-box">
+            <input id="inventorySearch" type="search" placeholder="Buscar producto o bodega">
+        </div>
+        <select id="warehouseFilter" class="toolbar-select" aria-label="Filtrar por bodega"></select>
+        <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer">
+            <input type="checkbox" id="lowStockToggle">
+            Solo stock bajo (&lt; 10)
+        </label>
+    </div>
+
+    <div class="table-card">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Bodega</th><th>Producto</th>
+                        <th>Existencias</th><th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="inventoryTableBody"></tbody>
+            </table>
+        </div>
+        <div class="table-footer" id="inventoryTableFooter">Cargando inventario...</div>
+    </div>
+</div>
