@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.springboot.demoproject.dto.BodegaRequest;
 import com.project.springboot.demoproject.dto.BodegaResponse;
+import com.project.springboot.demoproject.dto.logitrackiq.OcupacionBodegaDto;
 import com.project.springboot.demoproject.services.BodegaService;
+import com.project.springboot.demoproject.services.KpiService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -32,6 +34,13 @@ import lombok.RequiredArgsConstructor;
 public class BodegaController {
 
     private final BodegaService bodegaService;
+    private final KpiService kpiService;
+
+    @GetMapping("/criticas")
+    @Operation(summary = "LogiTrack IQ: bodegas con ocupacion >= 90%")
+    public List<OcupacionBodegaDto> listarCriticas() {
+        return kpiService.listarBodegasCriticas();
+    }
 
     @GetMapping
     @Operation(summary = "Listar todas las bodegas (opcionalmente filtrar por ubicacion)")

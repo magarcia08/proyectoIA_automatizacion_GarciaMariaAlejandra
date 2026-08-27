@@ -1,6 +1,7 @@
 package com.project.springboot.demoproject.entities;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.project.springboot.demoproject.audit.Auditable;
 import com.project.springboot.demoproject.audit.AuditoriaEntityListener;
@@ -13,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -20,44 +22,40 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Nota: el esquema SQL enviado no tiene columna "stock" en producto (el stock
- * vive por bodega en inventario_bodega). El campo "stock" que pide el enunciado
- * en el CRUD de productos se expone en el DTO como el stock TOTAL sumado de
- * todas las bodegas (ver ProductoService/ProductoDto).
+ * Resumen diario del panel (LogiTrack IQ). Solo puede existir uno por
+ * fecha: publicar de nuevo para la misma fecha reemplaza contenidoJson
+ * (ver PanelResumenService), y el reemplazo queda auditado porque esta
+ * entidad implementa Auditable igual que el resto.
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "producto")
+@Table(name = "resumen_panel")
 @EntityListeners(AuditoriaEntityListener.class)
-public class Producto implements Auditable {
+public class ResumenPanel implements Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 150)
-    private String nombre;
+    @Column(nullable = false, unique = true)
+    private LocalDate fecha;
 
-    @Column(nullable = false, length = 100)
-    private String categoria;
+    @Lob
+    @Column(name = "contenido_json", nullable = false)
+    private String contenidoJson;
 
-    @Column(nullable = false, precision = 12, scale = 2)
-    private BigDecimal precio;
-
-    /**
-     * LogiTrack IQ: proveedor principal (opcional). Un producto sin
-     * proveedor principal NUNCA aparece como producto en riesgo ni puede
-     * generar una orden automatica (ver RiesgoService).
-     */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "proveedor_principal_id")
-    private Proveedor proveedorPrincipal;
+    @JoinColumn(name = "autor_id", nullable = false)
+    private Usuario autor;
+
+    @Column(name = "creado_en", nullable = false)
+    private LocalDateTime creadoEn = LocalDateTime.now();
 
     @Override
     public String getNombreEntidad() {
-        return "producto";
+        return "resumen_panel";
     }
 
     @Override

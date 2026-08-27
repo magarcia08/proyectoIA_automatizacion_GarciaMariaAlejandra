@@ -39,6 +39,9 @@ public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
 
     List<Movimiento> findByBodegaDestinoId(Long bodegaId);
 
+    /** LogiTrack IQ: conteo de movimientos (no de detalles) por tipo en un rango — ver GET /kpis (movimientosAyer). */
+    long countByTipoAndFechaBetween(TipoMovimiento tipo, LocalDateTime inicio, LocalDateTime fin);
+
     @Query("SELECT m FROM Movimiento m WHERE m.bodegaOrigen.id = :bodegaId OR m.bodegaDestino.id = :bodegaId")
     List<Movimiento> findByBodegaInvolucrada(@Param("bodegaId") Long bodegaId);
 

@@ -71,14 +71,18 @@ de estado y publicación/reemplazo del resumen.
    localmente (el propio n8n o un cliente MCP lo lanza como subproceso),
    no requiere exponer un puerto adicional, y el SDK oficial
    (`@modelcontextprotocol/sdk`) ya resuelve el framing JSON-RPC.
-8. **Pruebas contra H2 en memoria** (no contra la Postgres remota de
-   `application.properties`, ni Testcontainers): este entorno de
-   desarrollo no tiene Docker, y usar la base compartida ensuciaría los
-   datos de demo del video. `src/test/resources/application.properties`
-   apunta a H2 con `ddl-auto=create-drop`, dejando que Hibernate derive el
-   esquema (incluidos los enums nativos vía `@JdbcTypeCode(NAMED_ENUM)`)
-   directamente de las entidades — mismo modelo, sin depender de
-   `schema.sql` (que sí es específico de PostgreSQL).
+8. **Pruebas contra un PostgreSQL real embebido** (`io.zonky.test:embedded-postgres`,
+   arrancado por `AbstractLogiTrackIqTest` vía `@DynamicPropertySource`;
+   no contra la Postgres remota compartida, ni Testcontainers — este
+   entorno no tiene Docker). Se intentó primero H2 en memoria, pero
+   `Usuario.rol`, `Movimiento.tipo` y `Auditoria.tipoOperacion` (entidades
+   del reto anterior, no se tocan) fijan `columnDefinition` con el nombre
+   literal de un tipo ENUM de PostgreSQL; el binder JDBC de Hibernate para
+   `@JdbcTypeCode(NAMED_ENUM)` no es portable a H2 (produce
+   `ClassCastException` al enlazar el valor, comprobado empíricamente, ver
+   `docs/sdd/evidencia/01-rojo-resumen.md`). Un Postgres real evita tocar
+   esas entidades y usa **el mismo `schema.sql`/enums que producción**, sin
+   necesidad de mantener un esquema paralelo para pruebas.
 
 ## Diagrama de flujo
 

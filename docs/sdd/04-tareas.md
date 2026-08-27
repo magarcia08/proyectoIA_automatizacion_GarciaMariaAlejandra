@@ -12,20 +12,27 @@ fase (evidencia real: código + `mvn test` + artefactos).
 - [x] Borrador de `skills/operacion-logitrack/SKILL.md`
 
 ## Fase 2 — `test: define reorder and order-state rules` (26-ago)
-- [ ] Enums nuevos: `EstadoOrden`, `EstadoCobertura`, `Severidad`,
+- [x] Enums nuevos: `EstadoOrden`, `EstadoCobertura`, `Severidad`,
       `TipoAccionResumen`; `Rol.AGENTE`.
-- [ ] Entidades nuevas: `Proveedor`, `OrdenCompra`, `ResumenPanel`;
+- [x] Entidades nuevas: `Proveedor`, `OrdenCompra`, `ResumenPanel`;
       `Producto.proveedorPrincipal`.
-- [ ] Repositorios: `ProveedorRepository`, `OrdenCompraRepository`,
-      `ResumenPanelRepository`.
-- [ ] `schema.sql`/`data.sql`: tablas nuevas, columna
+- [x] Repositorios: `ProveedorRepository`, `OrdenCompraRepository`,
+      `ResumenPanelRepository` (+ metodos nuevos en `MovimientoRepository`
+      y `MovimientoDetalleRepository`).
+- [x] `schema.sql`/`data.sql`: tablas nuevas, columna
       `producto.proveedor_principal_id`, valor `AGENTE` en
-      `rol_usuario`, proveedores y usuario `agente` de prueba.
-- [ ] `src/test/resources/application.properties` (H2 en memoria).
-- [ ] Tests (rojo esperado) de las 8 reglas obligatorias + 1 prueba de
-      integración de `PATCH /ordenes/{id}/estado` o `POST /panel/resumen`.
-- [ ] Ejecutar `mvn test`, guardar salida real en
-      `docs/sdd/evidencia/01-rojo.txt`.
+      `rol_usuario`, proveedores, usuario `agente` de prueba y datos de
+      consumo/ocupacion para la demo (ver comentarios en `data.sql`).
+- [x] Controladores + DTOs + reglas de seguridad (`@PreAuthorize`) para
+      los 13 endpoints nuevos, cableados a los servicios (ver mas abajo).
+- [x] `src/test/resources/application.properties` (Postgres real
+      embebido, ver decision 8 en `03-diseno.md`).
+- [x] Tests (rojo esperado) de las 8 reglas obligatorias + prueba de
+      integracion de `PATCH /ordenes/{id}/estado` y `POST /panel/resumen`.
+- [x] Ejecutar `mvn test`, guardar salida real en
+      `docs/sdd/evidencia/01-rojo-mvn-test-full.log` (resumen en
+      `01-rojo-resumen.md`): 11 pruebas, 3 pasan (validacion/seguridad ya
+      completas), 8 fallan exactamente en la logica de negocio pendiente.
 
 ## Fase 3 — `feat: implement LogiTrack IQ rules` (27-ago)
 - [ ] `RiesgoService`/`KpiService`: ocupación, quiebre, riesgo, consumo,

@@ -16,7 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.springboot.demoproject.dto.ProductoRequest;
 import com.project.springboot.demoproject.dto.ProductoResponse;
+import com.project.springboot.demoproject.dto.logitrackiq.ProductoRiesgoResponse;
+import com.project.springboot.demoproject.dto.logitrackiq.ProductoStockResponse;
+import com.project.springboot.demoproject.services.KpiService;
 import com.project.springboot.demoproject.services.ProductoService;
+import com.project.springboot.demoproject.services.RiesgoService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -32,6 +36,20 @@ import lombok.RequiredArgsConstructor;
 public class ProductoController {
 
     private final ProductoService productoService;
+    private final KpiService kpiService;
+    private final RiesgoService riesgoService;
+
+    @GetMapping("/{id}/stock")
+    @Operation(summary = "LogiTrack IQ: stock total y desglose por bodega, calculados desde movimientos")
+    public ProductoStockResponse obtenerStock(@PathVariable Long id) {
+        return kpiService.obtenerStock(id);
+    }
+
+    @GetMapping("/riesgo")
+    @Operation(summary = "LogiTrack IQ: productos con proveedor principal cuyo stock total esta por debajo de su punto de reorden")
+    public List<ProductoRiesgoResponse> listarEnRiesgo() {
+        return riesgoService.listarProductosEnRiesgo();
+    }
 
     @GetMapping
     @Operation(summary = "Listar productos (filtros opcionales por nombre o categoria)")
