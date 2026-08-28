@@ -17,7 +17,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -77,7 +76,9 @@ public class OrdenCompra implements Auditable {
     @JoinColumn(name = "creado_por_id", nullable = false)
     private Usuario creadoPor;
 
-    @Lob
+    // Sin @Lob a proposito: en PostgreSQL, @Lob sobre byte[] hace que Hibernate
+    // use un Large Object (columna "oid"), pero schema.sql declara esta
+    // columna como BYTEA. Un byte[] plano se enlaza directamente como bytea.
     @Column(name = "pdf_documento")
     private byte[] pdfDocumento;
 

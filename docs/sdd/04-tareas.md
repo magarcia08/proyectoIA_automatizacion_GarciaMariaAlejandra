@@ -35,21 +35,26 @@ fase (evidencia real: código + `mvn test` + artefactos).
       completas), 8 fallan exactamente en la logica de negocio pendiente.
 
 ## Fase 3 — `feat: implement LogiTrack IQ rules` (27-ago)
-- [ ] `RiesgoService`/`KpiService`: ocupación, quiebre, riesgo, consumo,
+- [x] `RiesgoService`/`KpiService`: ocupación, quiebre, riesgo, consumo,
       punto de reorden, cobertura, movimientos de ayer, bodegas críticas.
-- [ ] `OrdenCompraService`: crear borrador (total en servidor), máquina
-      de estados, recepción transaccional (orden + movimiento ENTRADA).
-- [ ] `PanelResumenService`: validación de contrato + reemplazo por
-      fecha + auditoría.
-- [ ] `PdfService` (PDFBox): generar/guardar/leer PDF, marca de agua
-      BORRADOR, borrado del PDF al cambiar estado.
-- [ ] Controladores: `KpiController`, `ProveedorController`,
+- [x] `OrdenCompraService`: crear borrador (total en servidor), máquina
+      de estados, recepción transaccional (orden + movimiento ENTRADA,
+      reutilizando `MovimientoService`).
+- [x] `PanelResumenService`: validación de contrato + reemplazo por
+      fecha + auditoría (vía `Auditable`/`AuditoriaEntityListener`).
+- [x] `PdfService` (PDFBox 3): generar/guardar/leer PDF, marca de agua
+      diagonal BORRADOR, borrado del PDF al cambiar estado.
+- [x] Controladores: `KpiController`, `ProveedorController`,
       `OrdenCompraController`, `PanelResumenController`; extensión de
-      `ProductoController` y `BodegaController`.
-- [ ] `SecurityConfig`: reglas AGENTE vs ADMIN por endpoint.
-- [ ] Swagger (`@Tag`/`@Operation`) en los controladores nuevos.
-- [ ] `mvn test` en verde; salida real en
-      `docs/sdd/evidencia/02-verde.txt`.
+      `ProductoController` (`/{id}/stock`, `/riesgo`) y `BodegaController`
+      (`/criticas`).
+- [x] Reglas AGENTE vs ADMIN por endpoint (`@PreAuthorize` en cada
+      controlador; no fue necesario tocar `SecurityConfig`, que ya deja
+      pasar cualquier ruta autenticada por el catch-all existente).
+- [x] Swagger (`@Tag`/`@Operation`) en los controladores nuevos.
+- [x] `mvn test` en verde (11/11); salida real en
+      `docs/sdd/evidencia/02-verde-mvn-test-full.log` (resumen en
+      `02-verde-resumen.md`).
 
 ## Fase 4 — commit final (28-ago)
 - [ ] `mcp-server/` (6 herramientas) + `README.md` + `EVIDENCIA.md`.
