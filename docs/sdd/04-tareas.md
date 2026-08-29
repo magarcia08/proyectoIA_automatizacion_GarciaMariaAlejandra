@@ -57,13 +57,26 @@ fase (evidencia real: código + `mvn test` + artefactos).
       `02-verde-resumen.md`).
 
 ## Fase 4 — commit final (28-ago)
-- [ ] `mcp-server/` (6 herramientas) + `README.md` + `EVIDENCIA.md`.
-- [ ] `skills/operacion-logitrack/SKILL.md` final.
-- [ ] `n8n/resumen-diario-inventario.json` + `n8n/README.md`.
-- [ ] Dashboard: módulo "Torre de control" (KPIs, riesgo, órdenes,
+- [x] `mcp-server/` (6 herramientas, Node.js + `@modelcontextprotocol/sdk`)
+      + `README.md` + `EVIDENCIA.md` con request/response REAL (backend
+      real levantado localmente, incluido un error controlado) y
+      `evidencia-runner.mjs` (cliente MCP real que la generó).
+- [x] `skills/operacion-logitrack/SKILL.md` (ya estaba completo desde la
+      fase 1; verificado consistente con las 6 herramientas del MCP).
+- [x] `n8n/resumen-diario-inventario.json` + `n8n/README.md` (no se pudo
+      ejecutar en este entorno: sin instancia de n8n ni credencial de
+      LLM; documentado qué falta y por qué).
+- [x] Dashboard: módulo "Torre de control" (`pages/torre-control.html` +
+      `js/torre-control.js`: KPIs, ocupación, riesgo, órdenes BORRADOR,
       generar/ver PDF, botón Aprobar solo ADMIN); `sessionStorage` en
-      `api.js`.
-- [ ] `docs/sdd/evidencia-sdd.md` (enlaces, tabla regla→prueba, hashes,
-      evidencia roja/verde, reflexión).
-- [ ] `README.md` actualizado (instalación, usuarios de prueba, rutas,
-      pendientes del usuario: video y ejecución de n8n).
+      `api.js` (antes `localStorage`) + `peticionApiBinaria` para el PDF.
+- [x] `docs/sdd/evidencia-sdd.md` (enlaces, tabla regla→prueba, hashes,
+      evidencia roja/verde, reflexión ≤150 palabras).
+- [x] `docs/diagrama-flujo.md` y `docs/evidencia-flujo-completo.md`
+      (flujo completo verificado end-to-end contra un backend real:
+      producto en riesgo → orden BORRADOR → aprobación → recepción →
+      movimiento ENTRADA → dashboard actualizado, con stock y KPIs antes/
+      después reales).
+- [x] `README.md` actualizado (sección 12: instalación, endpoints
+      nuevos, dashboard, MCP, n8n, skill, evidencia, y checklist de lo
+      que falta hacer el estudiante: video y ejecución real de n8n).

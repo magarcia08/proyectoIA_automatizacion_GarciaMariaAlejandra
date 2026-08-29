@@ -1,8 +1,13 @@
-# LogiTrack — Sistema de gestión y auditoría de bodegas
+# LogiTrack — Sistema de gestión y auditoría de bodegas + LogiTrack IQ
 
 Backend REST desarrollado en **Spring Boot 3.3 (Java 17)** para LogiTrack S.A., que centraliza el control de
 inventarios entre bodegas, registra automáticamente auditorías de cada cambio y protege todos los endpoints
 con autenticación **JWT**. Incluye un frontend estático (HTML/CSS/JS) que consume la API.
+
+Este repositorio incluye, además del reto original, la extensión **LogiTrack IQ** (torre de control de
+inventario): detección de productos en riesgo, órdenes de compra con flujo de estados, PDF con marca de agua,
+un servidor MCP, un flujo n8n y un dashboard nuevo. Ver la sección **[12. LogiTrack IQ](#12-logitrack-iq)**
+más abajo y [`docs/enunciado-logitrack-iq.md`](docs/enunciado-logitrack-iq.md) para el enunciado completo.
 
 ---
 
@@ -15,6 +20,9 @@ con autenticación **JWT**. Incluye un frontend estático (HTML/CSS/JS) que cons
 | Base de datos        | PostgreSQL                                    |
 | Seguridad            | Spring Security + JWT (JJWT 0.12.6)           |
 | Documentación API    | springdoc-openapi (Swagger UI)                |
+| PDF (LogiTrack IQ)   | Apache PDFBox 3                               |
+| Automatización       | n8n (AI Agent) + servidor MCP propio (Node.js) |
+| Pruebas              | JUnit 5 + PostgreSQL real embebido (`io.zonky.test:embedded-postgres`, sin Docker) |
 | Build                | Maven (empaquetado `.jar`)                    |
 | Frontend             | HTML / CSS / JavaScript puro                  |
 
@@ -42,8 +50,15 @@ demoproject/
  │   ├─ data.sql           -> Datos de prueba (usuarios, bodegas, productos...)
  │   └─ static/            -> Frontend (HTML/CSS/JS), servido por el propio Spring Boot
  │       ├─ index.html, login.html, dashboard.html
- │       ├─ css/  js/  pages/
- └─ pom.xml
+ │       ├─ css/  js/  pages/  (incluye pages/torre-control.html, js/torre-control.js)
+ ├─ pom.xml
+ ├─ mcp-server/        -> Servidor MCP de LogiTrack IQ (Node.js, 6 herramientas)
+ ├─ n8n/                -> Export del flujo "Resumen diario de inventario"
+ ├─ skills/operacion-logitrack/SKILL.md  -> Reglas del flujo automatizado
+ ├─ frontend/           -> Apunta a src/main/resources/static (ver frontend/README.md)
+ └─ docs/
+     ├─ enunciado-logitrack-iq.md, diagrama-flujo.md, evidencia-flujo-completo.md
+     └─ sdd/            -> Propuesta, especificación, diseño, tareas, evidencia SDD/TDD
 ```
 
 ---
@@ -143,6 +158,7 @@ Usuarios de prueba (creados por `data.sql`):
 | superadmin  | superadmin123 | SUPERADMIN |
 | admin       | admin123      | ADMIN      |
 | jperez      | empleado123   | EMPLEADO   |
+| agente      | agente123     | AGENTE (LogiTrack IQ — usado por `mcp-server/`) |
 
 ### 3.7 Codificación UTF-8 (tildes/ñ)
 
@@ -493,5 +509,103 @@ classDiagram
 ## 11. Pendiente / ideas de mejora
 
 - Paginación (`Pageable`) en los listados grandes (`/movimientos`, `/auditorias`).
-- Tests de integración con Testcontainers (PostgreSQL real) para los flujos de movimientos.
 - Refresh tokens (actualmente el JWT expira y hay que loguear de nuevo).
+
+---
+
+## 12. LogiTrack IQ
+
+Extensión del backend anterior: torre de control de inventario con detección de riesgo, órdenes
+de compra, PDF con marca de agua, un servidor MCP, un flujo n8n y un módulo nuevo del dashboard.
+Documentación completa del proceso (SDD/TDD, trazabilidad regla→prueba, hashes de commits) en
+[`docs/sdd/evidencia-sdd.md`](docs/sdd/evidencia-sdd.md).
+
+### 12.1 Instalación y ejecución
+
+Mismos pasos de la sección 3: `./mvnw spring-boot:run`. `schema.sql`/`data.sql` ya incluyen las
+tablas y datos nuevos (proveedores, `producto.proveedor_principal_id`, el rol `AGENTE`, historial
+de movimientos para que haya un producto en riesgo real desde el primer arranque — ver los
+comentarios en `data.sql`). El servidor queda en `http://localhost:8085` (`server.port=8085`).
+
+> **Importante**: la Postgres remota de Supabase configurada en `application.properties` no
+> aceptó autenticación al preparar este proyecto (`FATAL: tenant/user ... not found` — el
+> proyecto de Supabase pudo pausarse o rotar credenciales). Verifica tus credenciales antes de
+> grabar el video, o apunta `spring.datasource.*` a una Postgres local.
+
+### 12.2 Endpoints nuevos
+
+| Método | Ruta | Rol | Descripción |
+|---|---|---|---|
+| GET | `/kpis` | Autenticado | Los 4 indicadores + movimientos de ayer + `calculadoEn` |
+| GET | `/productos/{id}/stock` | Autenticado | Stock total y desglose por bodega |
+| GET | `/productos/riesgo` | Autenticado | Productos en riesgo (proveedor, consumo, reorden, cobertura) |
+| GET | `/bodegas/criticas` | Autenticado | Bodegas con ocupación ≥ 90% |
+| GET | `/proveedores` | Autenticado | Proveedores precargados |
+| GET | `/ordenes` | Autenticado | Listar órdenes (`?estado=`) |
+| POST | `/ordenes` | AGENTE / ADMIN | Crear orden en `BORRADOR` (total calculado en servidor) |
+| GET | `/ordenes/{id}` | Autenticado | Detalle de una orden |
+| POST / GET | `/ordenes/{id}/pdf` | ADMIN | Generar / descargar el PDF (marca de agua si `BORRADOR`) |
+| PATCH | `/ordenes/{id}/estado` | ADMIN | Cambiar estado (`AGENTE` → `403`) |
+| POST | `/panel/resumen` | AGENTE / ADMIN | Publicar/reemplazar el resumen del día |
+| GET | `/panel/resumen` | Autenticado | Último resumen válido (`404` si no existe) |
+
+Swagger UI: `http://localhost:8085/swagger-ui.html` (todos los endpoints nuevos están
+documentados con `@Tag`/`@Operation`, en las mismas etiquetas "LogiTrack IQ - ...").
+
+### 12.3 Dashboard — módulo "Torre de control"
+
+Con el backend corriendo, entra a `http://localhost:8085/dashboard.html` (login con `admin` /
+`admin123`) y abre **Torre de control** en el menú lateral: los 4 indicadores, ocupación por
+bodega, movimientos de ayer, el último resumen del panel, la tabla de productos en riesgo y las
+órdenes en `BORRADOR` (generar/ver PDF, aprobar — visible solo si el usuario logueado es
+`ADMIN`/`SUPERADMIN`). El JWT ahora se guarda en `sessionStorage` (no `localStorage`). Detalle en
+[`frontend/README.md`](frontend/README.md).
+
+### 12.4 Servidor MCP
+
+```bash
+cd mcp-server
+npm install
+npm start
+```
+
+6 herramientas (`consultar_stock_producto`, `consultar_bodegas_criticas`,
+`consultar_productos_en_riesgo`, `consultar_kpis`, `crear_orden_borrador`, `publicar_resumen`) —
+ninguna aprueba/cancela/recibe órdenes. Detalle, configuración y evidencia real de
+entrada/salida de cada herramienta en [`mcp-server/README.md`](mcp-server/README.md) y
+[`mcp-server/EVIDENCIA.md`](mcp-server/EVIDENCIA.md).
+
+### 12.5 Flujo n8n
+
+`n8n/resumen-diario-inventario.json` — Schedule Trigger (6:00 a.m. `America/Bogota`) + AI Agent +
+las 6 herramientas MCP. **No se pudo ejecutar en este entorno** (no hay una instancia de n8n ni
+credencial de modelo de lenguaje disponibles aquí). Instrucciones completas para importarlo,
+conectar el servidor MCP y tu propia credencial de LLM en
+[`n8n/README.md`](n8n/README.md).
+
+### 12.6 Skill
+
+[`skills/operacion-logitrack/SKILL.md`](skills/operacion-logitrack/SKILL.md) — reglas operativas
+del flujo automatizado (consultar riesgo primero, máximo una orden por ejecución, nunca aprobar,
+contrato exacto del resumen, informar errores).
+
+### 12.7 Evidencia y flujo completo
+
+- [`docs/evidencia-flujo-completo.md`](docs/evidencia-flujo-completo.md): el flujo de negocio
+  completo (producto en riesgo → orden BORRADOR vía MCP → aprobación → recepción → movimiento
+  ENTRADA → dashboard actualizado) ejecutado de punta a punta contra un backend real.
+- [`docs/capturas/orden-1-borrador-marca-de-agua.pdf`](docs/capturas/orden-1-borrador-marca-de-agua.pdf):
+  PDF real generado por el sistema, con la marca de agua diagonal BORRADOR.
+- [`docs/diagrama-flujo.md`](docs/diagrama-flujo.md): diagrama n8n → MCP → API → PostgreSQL → dashboard.
+- [`docs/sdd/evidencia-sdd.md`](docs/sdd/evidencia-sdd.md): trazabilidad regla→prueba, hashes de
+  los 3 commits (`docs:`/`test:`/`feat:`) y evidencia roja→verde de `mvn test`.
+
+### 12.8 Qué falta (tarea del estudiante, no reproducible en este entorno)
+
+1. **Verificar/actualizar las credenciales de Supabase** en `application.properties` (o usar una
+   Postgres propia) antes de grabar.
+2. **Ejecutar el flujo n8n de verdad** (importarlo, conectar tu credencial de LLM, correrlo
+   manualmente) y capturar una ejecución exitosa y una con error controlado.
+3. **Grabar el video de 4-6 minutos** mostrando: datos iniciales + ejecución manual de n8n →
+   consulta de riesgo y orden `BORRADOR` → aprobación por ADMIN → recepción, movimiento ENTRADA y
+   dashboard actualizado. Sin mostrar ni explicar código.

@@ -1,0 +1,101 @@
+<div class="module-view fade-in">
+    <div class="page-head">
+        <div>
+            <h2>Torre de control de inventario</h2>
+            <p>Indicadores, riesgo de reorden y órdenes de compra de LogiTrack IQ.</p>
+        </div>
+        <button class="btn btn-secondary" id="tcRefreshButton">↻ Actualizar</button>
+    </div>
+
+    <div class="kpi-grid fade-in">
+        <article class="kpi-card" style="--card-accent:#fee2e2;--card-color:#b91c1c">
+            <div class="kpi-label"><span class="kpi-icon">⚠</span>Productos en quiebre</div>
+            <div class="kpi-value" id="tcQuiebre">—</div>
+            <div class="kpi-detail">stock total en 0</div>
+        </article>
+        <article class="kpi-card" style="--card-accent:#fef3c7;--card-color:#b45309">
+            <div class="kpi-label"><span class="kpi-icon">▽</span>Productos en riesgo</div>
+            <div class="kpi-value" id="tcRiesgo">—</div>
+            <div class="kpi-detail">por debajo del punto de reorden</div>
+        </article>
+        <article class="kpi-card" style="--card-accent:#dbeafe;--card-color:#1d4ed8">
+            <div class="kpi-label"><span class="kpi-icon">▤</span>Órdenes por aprobar</div>
+            <div class="kpi-value" id="tcOrdenesCantidad">—</div>
+            <div class="kpi-detail" id="tcOrdenesMonto">monto total: —</div>
+        </article>
+        <article class="kpi-card" style="--card-accent:#ede9fe;--card-color:#7c3aed">
+            <div class="kpi-label"><span class="kpi-icon">▥</span>Bodegas críticas</div>
+            <div class="kpi-value" id="tcCriticas">—</div>
+            <div class="kpi-detail">ocupación ≥ 90%</div>
+        </article>
+    </div>
+
+    <div class="dashboard-grid fade-in">
+        <article class="panel">
+            <div class="panel-head">
+                <h3>Ocupación por bodega</h3>
+                <span id="tcCalculadoEn">—</span>
+            </div>
+            <div class="warehouse-bars" id="tcOcupacion"></div>
+        </article>
+        <article class="panel">
+            <div class="panel-head">
+                <h3>Movimientos de ayer</h3>
+                <span>Entrada / Salida / Transferencia</span>
+            </div>
+            <div class="activity-list" id="tcMovimientosAyer"></div>
+        </article>
+    </div>
+
+    <article class="panel fade-in">
+        <div class="panel-head">
+            <h3>Resumen del panel</h3>
+            <span id="tcResumenFecha">—</span>
+        </div>
+        <div id="tcResumenContenido">
+            <div class="empty-state">Cargando resumen...</div>
+        </div>
+    </article>
+
+    <div class="page-head" style="margin-top:1rem">
+        <div>
+            <h3>Productos en riesgo</h3>
+            <p>Stock total por debajo del punto de reorden (consumo × días de entrega × 1.5).</p>
+        </div>
+    </div>
+    <div class="table-card">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th><th>Stock</th><th>Consumo/día</th>
+                        <th>Punto reorden</th><th>Cobertura</th><th>Estado</th><th>Bodega sugerida</th>
+                    </tr>
+                </thead>
+                <tbody id="tcRiesgoBody"></tbody>
+            </table>
+        </div>
+        <div class="table-footer" id="tcRiesgoFooter">Cargando...</div>
+    </div>
+
+    <div class="page-head" style="margin-top:1rem">
+        <div>
+            <h3>Órdenes en BORRADOR</h3>
+            <p>Generar/ver el PDF (con marca de agua BORRADOR) y aprobar (solo ADMIN).</p>
+        </div>
+    </div>
+    <div class="table-card">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Producto</th><th>Proveedor</th><th>Bodega destino</th>
+                        <th>Cantidad</th><th>Total</th><th>Creada por</th><th>PDF</th><th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tcOrdenesBody"></tbody>
+            </table>
+        </div>
+        <div class="table-footer" id="tcOrdenesFooter">Cargando...</div>
+    </div>
+</div>

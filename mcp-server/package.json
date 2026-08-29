@@ -1,0 +1,14 @@
+{
+  "name": "logitrack-mcp-server",
+  "version": "1.0.0",
+  "description": "Servidor MCP de LogiTrack IQ: 6 herramientas que llaman la API REST real de LogiTrack usando un usuario con rol AGENTE. No accede a la base de datos ni implementa reglas de negocio.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.24.1"
+  }
+}

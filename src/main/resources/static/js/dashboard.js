@@ -81,6 +81,7 @@ async function abrirModulo(nombre) {
     }
 
     const titulos = {
+        "torre-control": "Torre de control de inventario",
         producto: "Gestión de productos",
         bodega: "Gestión de bodegas",
         inventario: "Inventario por bodega",
@@ -123,6 +124,7 @@ async function abrirModulo(nombre) {
 
 function iniciarModulo(nombre) {
     const inicializadores = {
+        "torre-control": iniciarTorreControl,
         producto: iniciarProductos,
         bodega: iniciarBodegas,
         inventario: iniciarInventario,

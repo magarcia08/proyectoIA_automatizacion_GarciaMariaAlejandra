@@ -1,0 +1,216 @@
+{
+  "name": "Resumen diario de inventario",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cron",
+              "expression": "0 6 * * *"
+            }
+          ]
+        }
+      },
+      "id": "1f6a8e10-0001-4a2b-9c3d-000000000001",
+      "name": "Schedule Trigger (6:00 a.m. America/Bogota)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-200, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "1f6a8e10-0002-4a2b-9c3d-000000000002",
+      "name": "Modelo de chat",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [40, 520],
+      "credentials": {
+        "openAiApi": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL",
+          "name": "Credencial de modelo (OpenAI/Anthropic/etc.)"
+        }
+      },
+      "notes": "Reemplaza este nodo/credencial por el proveedor de modelo que uses (OpenAI, Anthropic, etc.). Solo debe quedar conectado como ai_languageModel del nodo AI Agent."
+    },
+    {
+      "parameters": {
+        "transport": "stdio",
+        "command": "node",
+        "args": "={{ $env.LOGITRACK_MCP_SERVER_PATH || '/ruta/al/repo/mcp-server/src/index.js' }}",
+        "environments": "LOGITRACK_API_URL=http://localhost:8085\nLOGITRACK_AGENTE_USERNAME=agente\nLOGITRACK_AGENTE_PASSWORD=agente123"
+      },
+      "id": "1f6a8e10-0003-4a2b-9c3d-000000000003",
+      "name": "LogiTrack MCP (6 herramientas)",
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [200, 520],
+      "notes": "Expone las 6 herramientas de mcp-server/src/index.js. Ajusta 'args' a la ruta absoluta real del repo, o define la variable de entorno LOGITRACK_MCP_SERVER_PATH en n8n. Ver mcp-server/README.md."
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Ejecuta la operacion diaria de LogiTrack IQ.",
+        "options": {
+          "systemMessage": "Eres el agente operativo diario de LogiTrack IQ. Sigue EXACTAMENTE las reglas de skills/operacion-logitrack/SKILL.md:\n\n1. Consulta primero consultar_kpis() y consultar_productos_en_riesgo().\n2. Si la lista de riesgo esta vacia, no crees ninguna orden.\n3. Si hay productos en riesgo, toma SOLO el primero de la lista y crea COMO MAXIMO una orden en borrador con crear_orden_borrador, usando productoId, proveedorId y bodegaDestinoId de ese producto, y cantidad = ceil(max(1, puntoReorden * 2 - stockTotal)).\n4. NUNCA llames una herramienta para aprobar, cancelar o recibir una orden (no existe ninguna: es una restriccion obligatoria).\n5. Publica el resumen del dia con publicar_resumen, cumpliendo EXACTAMENTE el contrato (fecha de hoy en America/Bogota, narrativa de 20-500 caracteres, alertas y accionesSugeridas con identificadores reales devueltos por las herramientas, nunca inventados).\n6. Si alguna herramienta falla, no reintentes creando datos duplicados; igual intenta publicar un resumen que describa el error (severidad ALTA), y reporta el error como salida final."
+        }
+      },
+      "id": "1f6a8e10-0004-4a2b-9c3d-000000000004",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [40, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "1f6a8e10-0005-4a2b-9c3d-000000000005",
+      "name": "¿Hubo error?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "resultado",
+              "value": "exito"
+            },
+            {
+              "name": "resumen",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1f6a8e10-0006-4a2b-9c3d-000000000006",
+      "name": "Salida: exito",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [660, 200]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "resultado",
+              "value": "error"
+            },
+            {
+              "name": "detalle",
+              "value": "={{ $json.error }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1f6a8e10-0007-4a2b-9c3d-000000000007",
+      "name": "Salida: error controlado",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [660, 420],
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (6:00 a.m. America/Bogota)": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modelo de chat": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LogiTrack MCP (6 herramientas)": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "¿Hubo error?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hubo error?": {
+      "main": [
+        [
+          {
+            "node": "Salida: error controlado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Salida: exito",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Bogota",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true
+  },
+  "pinData": {},
+  "versionId": "1",
+  "meta": {
+    "instanceId": "logitrack-iq-resumen-diario-inventario"
+  }
+}
